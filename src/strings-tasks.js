@@ -134,6 +134,9 @@ function removeTrailingWhitespaces(value) {
  *   repeatString('abc', -2) => ''
  */
 function repeatString(str, times) {
+  if (typeof times !== 'number' || times < 0 || !str) {
+    return '';
+  }
   return str.repeat(times);
 }
 
@@ -247,8 +250,15 @@ function endsWith(str, substr) {
  *   formatTime(0, 45) => "00:45"
  *   formatTime(0, 0) => "00:00"
  */
-function formatTime(/* minutes, seconds */) {
-  throw new Error('Not implemented');
+function formatTime(minutes, seconds) {
+  if (minutes < 0 || seconds < 0 || minutes >= 60 || seconds >= 60) {
+    return null; // noto‘g‘ri qiymatlar uchun
+  }
+
+  const mm = String(minutes).padStart(2, '0'); // oldiga 0 qo‘yadi agar 1 raqamli bo‘lsa
+  const ss = String(seconds).padStart(2, '0');
+
+  return `${mm}:${ss}`;
 }
 
 /**
@@ -310,8 +320,11 @@ function containsSubstring(str, substring) {
  *   countVowels('aEiOu') => 5
  *   countVowels('XYZ') => 1
  */
-function countVowels(/* str */) {
-  throw new Error('Not implemented');
+function countVowels(str) {
+  if (typeof str !== 'string') return 0;
+
+  const vowels = 'aeiouyAEIOUY';
+  return [...str].filter((ch) => vowels.includes(ch)).length;
 }
 
 /**
@@ -346,8 +359,16 @@ function isPalindrome(str) {
  *   findLongestWord('A long and winding road') => 'winding'
  *   findLongestWord('No words here') => 'words'
  */
-function findLongestWord(/* sentence */) {
-  throw new Error('Not implemented');
+function findLongestWord(sentence) {
+  const arr1 = sentence.split(' ');
+  let longWords = '';
+  for (let i = 0; i < arr1.length; i += 1) {
+    if (arr1[i].length > longWords.length) {
+      longWords = arr1[i];
+    }
+  }
+
+  return longWords;
 }
 
 /**
@@ -402,8 +423,8 @@ function invertCase(str) {
  *   getStringFromTemplate('John','Doe') => 'Hello, John Doe!'
  *   getStringFromTemplate('Chuck','Norris') => 'Hello, Chuck Norris!'
  */
-function getStringFromTemplate(/* firstName, lastName */) {
-  throw new Error('Not implemented');
+function getStringFromTemplate(firstName, lastName) {
+  return `Hello, ${firstName} ${lastName}!`;
 }
 
 /**
@@ -416,8 +437,8 @@ function getStringFromTemplate(/* firstName, lastName */) {
  *   extractNameFromTemplate('Hello, John Doe!') => 'John Doe'
  *   extractNameFromTemplate('Hello, Chuck Norris!') => 'Chuck Norris'
  */
-function extractNameFromTemplate(/* value */) {
-  throw new Error('Not implemented');
+function extractNameFromTemplate(value) {
+  return value.replace('Hello, ', '').replace('!', '');
 }
 
 /**
@@ -431,8 +452,8 @@ function extractNameFromTemplate(/* value */) {
  *   unbracketTag('<span>') => 'span'
  *   unbracketTag('<a>') => 'a'
  */
-function unbracketTag(/* str */) {
-  throw new Error('Not implemented');
+function unbracketTag(str) {
+  return str.slice(1, -1);
 }
 
 /**
@@ -450,8 +471,8 @@ function unbracketTag(/* str */) {
  *   ],
  *   'info@gmail.com' => ['info@gmail.com']
  */
-function extractEmails(/* str */) {
-  throw new Error('Not implemented');
+function extractEmails(str) {
+  return str.split(';').map((email) => email.trim());
 }
 
 /**
@@ -470,8 +491,20 @@ function extractEmails(/* str */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  return str.replace(/[A-Za-z]/g, (char) => {
+    const code = char.charCodeAt(0);
+
+    if (code >= 65 && code <= 90) {
+      return String.fromCharCode(((code - 65 + 13) % 26) + 65);
+    }
+
+    if (code >= 97 && code <= 122) {
+      return String.fromCharCode(((code - 97 + 13) % 26) + 97);
+    }
+
+    return char;
+  });
 }
 
 /**
@@ -498,8 +531,31 @@ function encodeToRot13(/* str */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const ranks = [
+    'A',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    'J',
+    'Q',
+    'K',
+  ];
+  const suits = ['♣', '♦', '♥', '♠'];
+
+  const rank = value.slice(0, -1);
+  const suit = value.slice(-1);
+
+  const rankIndex = ranks.indexOf(rank);
+  const suitIndex = suits.indexOf(suit);
+
+  return suitIndex * ranks.length + rankIndex;
 }
 
 module.exports = {
